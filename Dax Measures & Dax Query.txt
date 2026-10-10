@@ -1,0 +1,102 @@
+1. DAX Measures
+
+Page 1: Store Revenue & Foot-Traffic Overview (Branch Dashboard)
+
+// Total Revenue generated across all store branches
+Total Revenue = SUM('Walmart Sales 2024 -2025'[total])
+
+// Average order value per invoice
+Avg Order Value = AVERAGE('Walmart Sales 2024 -2025'[total])
+
+// Average unit price per item sold
+Avg Unit Price = AVERAGE('Walmart Sales 2024 -2025'[unit_price])
+
+// Count of active store branches
+Total Branches = DISTINCTCOUNT('Walmart Sales 2024 -2025'[branch])
+
+
+Page 2: Customer Segmentation, Payment & Rating Dashboard
+
+// Total gross profit earned across transactions
+Total Gross Income = SUM('Walmart Sales 2024 -2025'[gross_income])
+
+// Total unique transaction count
+Total Transactions = DISTINCTCOUNT('Walmart Sales 2024 -2025'[invoice_id])
+
+// Average customer satisfaction rating out of 10
+Avg Customer Rating = AVERAGE('Walmart Sales 2024 -2025'[rating])
+
+// Average profit margin percentage across customer segments
+Avg Gross Margin % = DIVIDE(AVERAGE('Walmart Sales 2024 -2025'[gross_margin_pct]),100)
+
+
+Page 3: Walmart Product Performance & Revenue Report
+
+// Total revenue generated from product lines
+Total Product Sales = SUM('Walmart Sales 2024 -2025'[total])
+
+// Total physical unit quantity sold
+Total Units Sold = SUM('Walmart Sales 2024 -2025'[quantity])
+
+// Average units purchased per transaction basket
+Avg Basket Quantity = AVERAGE('Walmart Sales 2024 -2025'[quantity])
+
+// Dynamically calculates the single highest revenue-generating category
+Top Performing Category = TOPN(1,VALUES('Walmart Sales 2024 -2025'[product_line]),CALCULATE(SUM('Walmart Sales 2024 -2025'[total])),DESC)
+
+// Total volume of orders in the highest price bracket ($75-$100)
+Premium Bracket Orders = CALCULATE(COUNT('Walmart Sales 2024 -2025'[invoice_id]),'Walmart Sales 2024 -2025'[Price Bracket] = "$75-$100")
+
+
+
+2. DAX Queries
+
+Query 1: Branch Performance & Foot-Traffic Summary
+
+EVALUATE
+SUMMARIZECOLUMNS(
+    'Walmart Sales 2024 -2025'[branch],
+    'Walmart Sales 2024 -2025'[city],
+    "Total Revenue", [Total Revenue],
+    "Avg Order Value", [Avg Order Value],
+    "Total Transactions", [Total Transactions]
+)
+ORDER BY [Total Revenue] DESC
+
+
+Query 2: Product Line Sales & Quantity Breakdown
+
+EVALUATE
+SUMMARIZECOLUMNS(
+    'Walmart Sales 2024 -2025'[product_line],
+    "Total Product Sales", [Total Product Sales],
+    "Total Units Sold", [Total Units Sold],
+    "Avg Unit Price", [Avg Unit Price],
+    "Avg Customer Rating", [Avg Customer Rating]
+)
+ORDER BY [Total Product Sales] DESC
+
+
+Query 3: Customer Tier & Gross Margin Analysis
+
+EVALUATE
+SUMMARIZECOLUMNS(
+    'Walmart Sales 2024 -2025'[customer_type],
+    'Walmart Sales 2024 -2025'[Gender],
+    "Total Gross Income", [Total Gross Income],
+    "Avg Margin %", [Avg Gross Margin %],
+    "Transaction Count", [Total Transactions]
+)
+ORDER BY [Total Gross Income] DESC
+
+
+Query 4: Peak Time Window & Revenue Matrix
+
+EVALUATE
+SUMMARIZECOLUMNS(
+    'Walmart Sales 2024 -2025'[Time Window],
+    'Walmart Sales 2024 -2025'[product_line],
+    "Total Units Sold", [Total Units Sold],
+    "Total Sales", [Total Product Sales]
+)
+ORDER BY [Time Window] ASC, [Total Sales] DESC
